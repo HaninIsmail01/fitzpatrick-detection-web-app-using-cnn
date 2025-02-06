@@ -1,5 +1,5 @@
 import os
-import opencv2 as cv2
+import cv2
 import numpy as np
 import pandas as pd
 
@@ -39,8 +39,34 @@ def read_images(img_directory):
         images.append(img)
     
     # Create a dataframe with the image data and the image name
-    data = pd.DataFrame({'image':images, 'name': img_name})
+    data = pd.DataFrame({'image': images, 'name': img_name})
     
     # Return the dataframe
     return data
+
+def add_labels(data, labels_csv_path):
+    """
+    Adds a label column to the dataframe by reading the labels from a CSV file.
     
+    Parameters
+    ----------
+    data : pd.DataFrame
+        The dataframe containing the images and their names.
+    labels_csv_path : str
+        The path to the CSV file containing the labels.
+    
+    Returns
+    -------
+    data : pd.DataFrame
+        The dataframe with an added label column.
+    """
+    labels_df = pd.read_csv(labels_csv_path)
+    data = data.merge(labels_df, left_on='name', right_on='filename')
+    data = data.drop(columns=['filename'])
+    return data
+
+# Example usage
+# img_directory = 'path/to/images'
+# labels_csv_path = 'data/labels/labels.csv'
+# data = read_images(img_directory)
+# data = add_labels(data, labels_csv_path)
